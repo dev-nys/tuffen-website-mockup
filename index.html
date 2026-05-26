@@ -4,27 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tuffen - Endurance Support</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Climate+Crisis&family=Unbounded:wght@300;400;500;700&display=swap" rel="stylesheet">
+
 <style>
-@font-face {
-  font-family: 'Climate Crisis';
-  src: url('fonts/ClimateCrisis-Regular-VariableFont_YEAR.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Unbounded';
-  src: url('fonts/Unbounded-VariableFont_wght.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-
 :root {
   --black: #1a1a1a;
   --white: #ffffff;
   --cream: #f5f1e8;
   --red: #c41e1a;
-  --dark-gray: #2a2a2a;
+  --dark-gray: #242424;
   --mid-gray: #4a4a4a;
   --light-gray: #6a6a6a;
 }
@@ -36,21 +27,7 @@
 }
 
 html {
-  background: 
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.02) 2px,
-      rgba(0,0,0,0.02) 4px
-    );
+  scroll-behavior: smooth;
 }
 
 body {
@@ -60,40 +37,33 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   font-weight: 400;
-  position: relative;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: -1;
-}
+/* ─── HEADER ─────────────────────────────────── */
 
 header {
   background: var(--black);
-  padding: 24px 40px;
+  padding: 20px 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 4px solid var(--red);
-  position: relative;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: padding 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.25);
+}
+
+header.scrolled {
+  padding: 12px 48px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
 }
 
 header::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: repeating-linear-gradient(
     0deg,
     transparent,
@@ -107,22 +77,42 @@ header::after {
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
-  cursor: pointer;
   position: relative;
   z-index: 1;
 }
 
-.logo img {
-  height: 50px;
-  width: auto;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+.logo-wordmark {
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 26px;
+  color: var(--white);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: font-size 0.3s ease;
+}
+
+.logo-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  margin-left: 2px;
+  vertical-align: middle;
+  position: relative;
+  top: -3px;
+}
+
+header.scrolled .logo-wordmark {
+  font-size: 20px;
 }
 
 header nav {
   display: flex;
-  gap: 32px;
+  gap: 28px;
+  align-items: center;
   position: relative;
   z-index: 1;
 }
@@ -134,46 +124,71 @@ header nav a {
   text-transform: uppercase;
   font-size: 11px;
   letter-spacing: 2px;
-  transition: color 0.3s;
   font-weight: 400;
   border: 2px solid transparent;
-  padding: 4px 8px;
+  padding: 5px 9px;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 header nav a:hover {
   color: var(--red);
-  border: 2px solid var(--red);
+  border-color: var(--red);
 }
+
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+  background: none;
+  border: none;
+  z-index: 102;
+  position: relative;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.menu-toggle.open span:nth-child(2) { opacity: 0; }
+.menu-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ─── HERO ──────────────────────────────────── */
 
 .hero {
   position: relative;
   background: var(--black);
   color: var(--white);
-  padding: 80px 40px;
+  padding: 100px 48px;
   overflow: hidden;
   border-bottom: 6px solid var(--red);
-  min-height: 600px;
+  min-height: 620px;
+  display: flex;
+  align-items: center;
 }
 
 .hero::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
+  inset: 0;
+  background:
     repeating-linear-gradient(
       90deg,
-      rgba(255,255,255,0.03) 0px,
-      rgba(255,255,255,0.03) 1px,
+      rgba(255,255,255,0.025) 0px,
+      rgba(255,255,255,0.025) 1px,
       transparent 1px,
       transparent 3px
     ),
     repeating-linear-gradient(
       0deg,
-      rgba(255,255,255,0.02) 0px,
-      rgba(255,255,255,0.02) 1px,
+      rgba(255,255,255,0.015) 0px,
+      rgba(255,255,255,0.015) 1px,
       transparent 1px,
       transparent 3px
     );
@@ -183,11 +198,8 @@ header nav a:hover {
 .hero::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(ellipse at 20% 50%, rgba(196, 30, 26, 0.1) 0%, transparent 50%);
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(196,30,26,0.12) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -195,111 +207,107 @@ header nav a:hover {
   position: relative;
   z-index: 1;
   max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 80px;
 }
 
 .hero-badger {
-  width: 200px;
-  height: 200px;
   flex-shrink: 0;
+  width: 220px;
+  height: 220px;
   position: relative;
 }
 
 .hero-badger::before {
   content: '';
   position: absolute;
-  inset: -8px;
+  inset: -10px;
   border: 3px solid var(--red);
-  transform: rotate(-2deg);
+  transform: rotate(-3deg);
 }
 
-.hero-badger img {
+.hero-badger svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.5));
 }
 
-.hero-text h1 {
-  font-family: 'Climate Crisis', sans-serif;
-  font-size: 96px;
-  font-weight: 400;
-  letter-spacing: -3px;
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  animation: slideUp 0.8s ease-out;
-  text-shadow: 4px 4px 0 rgba(196, 30, 26, 0.3);
-  line-height: 1;
+.hero-text {
+  animation: slideUp 0.7s ease-out both;
 }
 
 .hero-tag {
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--red);
   text-transform: uppercase;
   letter-spacing: 3px;
-  margin-bottom: 20px;
-  animation: slideUp 0.8s ease-out 0.05s backwards;
+  margin-bottom: 24px;
   border: 2px solid var(--red);
   padding: 8px 16px;
   display: inline-block;
 }
 
-.hero p {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 16px;
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
-  animation: slideUp 0.8s ease-out 0.1s backwards;
-  max-width: 450px;
+.hero-text h1 {
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 104px;
   font-weight: 400;
-  line-height: 1.9;
+  letter-spacing: -3px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 rgba(196,30,26,0.3);
+  line-height: 0.95;
+}
+
+.hero p {
+  font-size: 14px;
+  margin-bottom: 36px;
+  max-width: 460px;
+  font-weight: 400;
+  line-height: 2;
   border-left: 4px solid var(--red);
   padding-left: 20px;
+  color: rgba(255,255,255,0.85);
 }
 
 .cta-button {
   display: inline-block;
   background: var(--red);
   color: var(--white);
-  padding: 16px 40px;
+  padding: 16px 44px;
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   border: 2px solid var(--red);
   cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 400;
-  transition: all 0.3s;
-  animation: slideUp 0.8s ease-out 0.2s backwards;
-  position: relative;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  transition: all 0.2s;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.3);
+  text-decoration: none;
 }
 
 .cta-button:hover {
   background: var(--white);
   color: var(--red);
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+  box-shadow: 7px 7px 0 rgba(0,0,0,0.3);
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── PRODUCTS ──────────────────────────────── */
+
 .products {
-  padding: 120px 40px;
+  padding: 120px 48px;
   background: var(--cream);
   position: relative;
 }
@@ -307,56 +315,49 @@ header nav a:hover {
 .products::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
+  inset: 0;
   background: repeating-linear-gradient(
     45deg,
     transparent,
     transparent 35px,
-    rgba(196, 30, 26, 0.02) 35px,
-    rgba(196, 30, 26, 0.02) 70px
+    rgba(196,30,26,0.015) 35px,
+    rgba(196,30,26,0.015) 70px
   );
   pointer-events: none;
 }
 
-.products-badger-accent {
-  position: absolute;
-  right: 40px;
-  top: 40px;
-  width: 180px;
-  height: 180px;
-  opacity: 0.06;
-  z-index: 0;
-  transform: rotate(8deg);
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
-.products-badger-accent img {
+.products-badger-accent {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  width: 180px;
+  height: 180px;
+  opacity: 0.045;
+  transform: rotate(10deg);
+}
+
+.products-badger-accent svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
 }
 
 .section-label {
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--red);
   text-transform: uppercase;
   letter-spacing: 3px;
   margin-bottom: 20px;
-  font-weight: 400;
-  position: relative;
-  z-index: 1;
   display: inline-block;
   border: 2px dotted var(--red);
-  padding: 8px 12px;
-}
-
-.section-heading {
-  position: relative;
-  z-index: 1;
-  margin-bottom: 20px;
+  padding: 7px 12px;
 }
 
 .section-heading h2 {
@@ -365,41 +366,34 @@ header nav a:hover {
   font-weight: 400;
   letter-spacing: -2px;
   text-transform: uppercase;
-  color: var(--black);
-  margin-bottom: 0;
   line-height: 1;
 }
 
 .section-description {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--mid-gray);
   max-width: 600px;
   margin-top: 16px;
-  line-height: 1.8;
-  position: relative;
-  z-index: 1;
+  line-height: 1.9;
 }
 
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 40px;
+  gap: 36px;
   margin-top: 60px;
-  position: relative;
-  z-index: 1;
 }
 
 .product-card {
   border: 3px solid var(--black);
   padding: 40px;
   background: var(--white);
-  transition: all 0.3s;
   position: relative;
   display: flex;
   flex-direction: column;
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.15);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.1);
   transform: rotate(-0.5deg);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
 }
 
 .product-card:nth-child(even) {
@@ -408,82 +402,60 @@ header nav a:hover {
 
 .product-card:hover {
   border-color: var(--red);
-  box-shadow: 8px 8px 0 rgba(196, 30, 26, 0.2);
+  box-shadow: 8px 8px 0 rgba(196,30,26,0.18);
   transform: translateY(-4px) rotate(0deg);
-}
-
-.product-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.01) 2px,
-    rgba(0,0,0,0.01) 4px
-  );
-  pointer-events: none;
 }
 
 .product-number {
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 48px;
-  font-weight: 400;
+  font-size: 46px;
   color: var(--red);
-  opacity: 0.3;
-  margin-bottom: 8px;
+  opacity: 0.22;
+  margin-bottom: 4px;
   letter-spacing: -2px;
+  line-height: 1;
 }
 
 .product-card h3 {
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 20px;
-  margin-bottom: 8px;
+  font-size: 19px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--black);
   border-bottom: 2px solid var(--black);
   padding-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .product-tagline {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: var(--red);
-  margin-bottom: 20px;
-  font-weight: 400;
-  line-height: 1.6;
+  margin-bottom: 16px;
   font-style: italic;
+  line-height: 1.6;
 }
 
 .product-card p {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 14px;
-  color: var(--black);
+  font-size: 13px;
+  color: var(--mid-gray);
   line-height: 1.9;
   margin-bottom: 24px;
   flex-grow: 1;
-  font-weight: 400;
 }
 
 .product-link {
   font-family: 'Climate Crisis', sans-serif;
   color: var(--red);
   text-decoration: none;
-  font-weight: 400;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  transition: all 0.3s;
-  align-self: flex-start;
   border: 2px solid var(--red);
   padding: 8px 14px;
   display: inline-block;
+  align-self: flex-start;
+  transition: background 0.2s, color 0.2s;
 }
 
 .product-link:hover {
@@ -491,10 +463,124 @@ header nav a:hover {
   color: var(--white);
 }
 
-.values {
+/* ─── ABOUT ─────────────────────────────────── */
+
+.about {
   background: var(--black);
   color: var(--white);
-  padding: 120px 40px;
+  padding: 120px 48px;
+  border-top: 6px solid var(--red);
+  position: relative;
+  overflow: hidden;
+}
+
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255,255,255,0.018) 0px,
+    rgba(255,255,255,0.018) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  pointer-events: none;
+}
+
+.about::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(196,30,26,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.about-left .section-label {
+  color: var(--red);
+}
+
+.about-left h2 {
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 64px;
+  font-weight: 400;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow: 3px 3px 0 rgba(196,30,26,0.35);
+}
+
+.divider {
+  width: 60px;
+  height: 3px;
+  background: var(--red);
+  margin: 24px 0;
+}
+
+.about-left p {
+  font-size: 14px;
+  line-height: 1.95;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 20px;
+}
+
+.about-right {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding-top: 8px;
+}
+
+.about-stat {
+  border-left: 4px solid var(--red);
+  padding-left: 24px;
+  position: relative;
+}
+
+.about-stat::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  background: var(--red);
+  border: 3px solid var(--black);
+}
+
+.about-stat-number {
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 60px;
+  color: var(--red);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.about-stat-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+/* ─── VALUES ─────────────────────────────────── */
+
+.values {
+  background: var(--cream);
+  color: var(--black);
+  padding: 120px 48px;
   border-top: 6px solid var(--red);
   position: relative;
   overflow: hidden;
@@ -503,51 +589,41 @@ header nav a:hover {
 .values::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: repeating-linear-gradient(
     90deg,
     transparent,
     transparent 1px,
-    rgba(196, 30, 26, 0.03) 1px,
-    rgba(196, 30, 26, 0.03) 2px
+    rgba(196,30,26,0.018) 1px,
+    rgba(196,30,26,0.018) 2px
   );
   pointer-events: none;
 }
 
-.values-badger-left {
+.values-badger-bg {
   position: absolute;
-  left: 40px;
-  top: 40px;
-  width: 180px;
-  height: 180px;
-  opacity: 0.06;
-  z-index: 0;
-  transform: rotate(-12deg);
+  right: 48px;
+  bottom: 48px;
+  width: 220px;
+  height: 220px;
+  opacity: 0.04;
+  transform: rotate(-8deg);
 }
 
-.values-badger-left img {
+.values-badger-bg svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-}
-
-.values-content {
-  position: relative;
-  z-index: 1;
 }
 
 .values-intro {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   max-width: 600px;
   margin-bottom: 40px;
   line-height: 1.9;
   border: 2px solid var(--red);
   padding: 20px;
-  background: rgba(196, 30, 26, 0.05);
+  background: rgba(196,30,26,0.04);
+  color: var(--mid-gray);
 }
 
 .values-heading {
@@ -556,9 +632,8 @@ header nav a:hover {
   font-weight: 400;
   letter-spacing: -2px;
   text-transform: uppercase;
-  color: var(--white);
-  margin-bottom: 12px;
-  text-shadow: 3px 3px 0 var(--red);
+  color: var(--black);
+  line-height: 1;
 }
 
 .values-grid {
@@ -577,48 +652,154 @@ header nav a:hover {
 .value-item::before {
   content: '';
   position: absolute;
-  left: -16px;
+  left: -14px;
   top: 0;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background: var(--red);
-  border: 3px solid var(--black);
+  border: 3px solid var(--cream);
 }
 
 .value-item h4 {
   font-family: 'Climate Crisis', sans-serif;
   font-size: 20px;
-  margin-bottom: 12px;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--red);
+  color: var(--black);
+  margin-bottom: 12px;
 }
 
 .value-item p {
-  font-family: 'Unbounded', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.9;
-  color: var(--white);
-  font-weight: 400;
+  color: var(--mid-gray);
 }
 
-.divider {
-  width: 60px;
-  height: 3px;
-  background: var(--red);
-  margin: 24px 0;
+/* ─── SIGNUP ─────────────────────────────────── */
+
+.signup {
+  background: var(--black);
+  color: var(--white);
+  padding: 100px 48px;
+  border-top: 6px solid var(--red);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
 }
+
+.signup::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  pointer-events: none;
+}
+
+.signup::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(196,30,26,0.1) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.signup-inner {
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.signup h2 {
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 56px;
+  font-weight: 400;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 16px;
+  text-shadow: 3px 3px 0 rgba(196,30,26,0.35);
+}
+
+.signup p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.85;
+  margin-bottom: 40px;
+}
+
+.signup-form {
+  display: flex;
+  max-width: 480px;
+  margin: 0 auto 16px;
+}
+
+.signup-form input {
+  flex: 1;
+  padding: 16px 20px;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 12px;
+  background: #2a2a2a;
+  border: 2px solid var(--light-gray);
+  border-right: none;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.signup-form input:focus {
+  border-color: var(--red);
+}
+
+.signup-form input::placeholder {
+  color: var(--light-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.signup-form button {
+  padding: 16px 28px;
+  background: var(--red);
+  color: var(--white);
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 2px solid var(--red);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.signup-form button:hover {
+  background: var(--white);
+  color: var(--red);
+  border-color: var(--white);
+}
+
+.signup-note {
+  font-size: 11px;
+  color: var(--light-gray);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
 
 .footer {
-  background: var(--black);
-  border-top: 6px solid var(--red);
-  padding: 60px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 40px;
+  background: var(--dark-gray);
+  border-top: 4px solid var(--red);
+  padding: 64px 48px 36px;
   color: var(--white);
   position: relative;
 }
@@ -626,50 +807,51 @@ header nav a:hover {
 .footer::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: repeating-linear-gradient(
     0deg,
     transparent,
     transparent 1px,
-    rgba(255,255,255,0.02) 1px,
-    rgba(255,255,255,0.02) 2px
+    rgba(255,255,255,0.012) 1px,
+    rgba(255,255,255,0.012) 2px
   );
   pointer-events: none;
 }
 
-.footer-section {
+.footer-main {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.4fr;
+  gap: 56px;
+  margin-bottom: 48px;
   position: relative;
   z-index: 1;
 }
 
 .footer-tagline {
   font-family: 'Climate Crisis', sans-serif;
-  font-size: 14px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  font-weight: 400;
   color: var(--red);
   margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(196,30,26,0.3);
 }
 
 .footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .footer-nav a {
   font-family: 'Climate Crisis', sans-serif;
-  color: var(--white);
+  color: rgba(255,255,255,0.6);
   text-decoration: none;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: color 0.3s;
-  font-weight: 400;
+  transition: color 0.2s;
 }
 
 .footer-nav a:hover {
@@ -677,46 +859,186 @@ header nav a:hover {
 }
 
 .footer-text {
-  font-family: 'Unbounded', sans-serif;
   font-size: 12px;
   line-height: 1.8;
-  color: var(--light-gray);
-  max-width: 300px;
+  color: rgba(255,255,255,0.45);
+  max-width: 260px;
+}
+
+.footer-signup-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-family: 'Climate Crisis', sans-serif;
+  font-size: 11px;
+  color: var(--red);
+  text-decoration: none;
+  border: 2px solid var(--red);
+  padding: 8px 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+
+.footer-signup-link:hover {
+  background: var(--red);
+  color: var(--white);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-copyright {
+  font-size: 11px;
+  color: rgba(255,255,255,0.28);
+}
+
+.footer-legal {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-legal a {
+  font-size: 11px;
+  color: rgba(255,255,255,0.28);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-legal a:hover {
+  color: var(--red);
 }
 
 .red-accent {
   color: var(--red);
 }
 
+/* ─── SCROLL REVEAL ──────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+
+@media (max-width: 960px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+}
+
 @media (max-width: 768px) {
+  header {
+    padding: 16px 24px;
+  }
+
+  header.scrolled {
+    padding: 12px 24px;
+  }
+
+  header nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    z-index: 101;
+    border-top: none;
+  }
+
+  header nav.open {
+    display: flex;
+  }
+
+  header nav a {
+    font-size: 22px;
+    letter-spacing: 4px;
+    border: none;
+    padding: 0;
+  }
+
+  .menu-toggle {
+    display: flex;
+    z-index: 103;
+  }
+
+  .hero {
+    padding: 64px 24px;
+    min-height: auto;
+  }
+
   .hero-content {
     flex-direction: column;
     gap: 40px;
+    align-items: flex-start;
   }
 
   .hero-text h1 {
-    font-size: 56px;
+    font-size: 64px;
   }
 
-  .section-heading h2 {
-    font-size: 42px;
-  }
-
-  .values-heading {
-    font-size: 42px;
+  .section-heading h2,
+  .values-heading,
+  .about-left h2,
+  .signup h2 {
+    font-size: 46px;
   }
 
   .products-grid {
     grid-template-columns: 1fr;
   }
 
-  header {
-    flex-direction: column;
-    gap: 16px;
+  .products,
+  .about,
+  .values,
+  .signup {
+    padding: 80px 24px;
   }
 
-  header nav {
-    gap: 16px;
+  .footer {
+    padding: 48px 24px 32px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .signup-form {
+    flex-direction: column;
+  }
+
+  .signup-form input {
+    border-right: 2px solid var(--light-gray);
+    border-bottom: none;
   }
 }
 </style>
@@ -724,164 +1046,335 @@ header nav a:hover {
 <body>
 
 <!-- Header -->
-<header>
-  <div class="logo">
-    <img src="images/logo-tuffen-full.png" alt="Tuffen">
-  </div>
-  <nav>
+<header id="main-header">
+  <a class="logo" href="#">
+    <span class="logo-wordmark">TUFFEN<span class="logo-dot"></span></span>
+  </a>
+  <nav id="main-nav">
     <a href="#shop">SHOP</a>
     <a href="#about">ABOUT</a>
     <a href="#journal">JOURNAL</a>
+    <a href="#signup">SIGN UP</a>
   </nav>
+  <button class="menu-toggle" id="menu-toggle" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </header>
 
-<!-- Hero Section -->
+<!-- Hero -->
 <section class="hero">
   <div class="hero-content">
+
+    <!-- Inline SVG badger mascot -->
     <div class="hero-badger">
-      <img src="images/badger-head.png" alt="Tuffen Badger">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Tuffen Badger Mascot">
+        <!-- Ears -->
+        <ellipse cx="50" cy="50" rx="23" ry="18" fill="#2a2a2a"/>
+        <ellipse cx="150" cy="50" rx="23" ry="18" fill="#2a2a2a"/>
+        <ellipse cx="50" cy="50" rx="13" ry="10" fill="#f5f1e8"/>
+        <ellipse cx="150" cy="50" rx="13" ry="10" fill="#f5f1e8"/>
+        <!-- Head base -->
+        <ellipse cx="100" cy="118" rx="74" ry="70" fill="#f5f1e8"/>
+        <!-- Black eye stripes -->
+        <ellipse cx="73" cy="96" rx="17" ry="42" fill="#1a1a1a" transform="rotate(6 73 96)"/>
+        <ellipse cx="127" cy="96" rx="17" ry="42" fill="#1a1a1a" transform="rotate(-6 127 96)"/>
+        <!-- White centre -->
+        <ellipse cx="100" cy="100" rx="19" ry="44" fill="#f5f1e8"/>
+        <!-- Eyes -->
+        <circle cx="72" cy="97" r="12" fill="#1a1a1a"/>
+        <circle cx="128" cy="97" r="12" fill="#1a1a1a"/>
+        <circle cx="72" cy="97" r="5" fill="#c41e1a"/>
+        <circle cx="128" cy="97" r="5" fill="#c41e1a"/>
+        <circle cx="70" cy="95" r="2" fill="white"/>
+        <circle cx="126" cy="95" r="2" fill="white"/>
+        <!-- Snout -->
+        <ellipse cx="100" cy="138" rx="24" ry="17" fill="#ddd0b4"/>
+        <!-- Nose -->
+        <ellipse cx="100" cy="131" rx="12" ry="9" fill="#1a1a1a"/>
+        <!-- Mouth -->
+        <path d="M88 146 Q100 153 112 146" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
     </div>
+
     <div class="hero-text">
       <div class="hero-tag">ENDURANCE ESSENTIALS</div>
-      <h1>STAY TUFF</h1>
+      <h1>STAY<br>TUFF</h1>
       <p>Nature-driven endurance support built for people who move. Preparation. Protection. Performance. Recovery. One day. Every day.</p>
-      <button class="cta-button">SHOP NOW</button>
+      <a href="#shop" class="cta-button">SHOP NOW</a>
     </div>
   </div>
 </section>
 
-<!-- Products Section -->
+<!-- Products -->
 <section class="products" id="shop">
-  <div class="products-badger-accent">
-    <img src="images/badger-head.png" alt="Tuffen Badger Watermark">
-  </div>
-  
-  <div class="section-label">BUILT FOR LONG DAYS</div>
-  <div class="section-heading">
-    <h2>OUR <span class="red-accent">GEAR</span></h2>
-    <p class="section-description">Six essentials. Six reasons to keep moving. Field-tested. Proven. Built by people who understand what your body needs when you're in the work.</p>
-  </div>
-  
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-number">01</div>
-      <h3>HEAT CREAM</h3>
-      <div class="product-tagline">Built in the burn.</div>
-      <p>A naturally activated warming cream designed for use before and during activity. Supports muscle preparation, circulation, and movement by bringing heat to the areas that need it most. Ideal for training, competition, and long days in motion.</p>
-      <a href="#" class="product-link">SHOP →</a>
-    </div>
-    
-    <div class="product-card">
-      <div class="product-number">02</div>
-      <h3>ANTI-CHAFE CREAM</h3>
-      <div class="product-tagline">Eliminate + Control.</div>
-      <p>A friction defence formula with colloidal silver that creates a smooth, durable barrier in high-contact areas. Designed to support skin comfort during training, endurance events, travel, and everyday movement.</p>
-      <a href="#" class="product-link">SHOP →</a>
-    </div>
-    
-    <div class="product-card">
-      <div class="product-number">03</div>
-      <h3>DUAL DEFENCE SPF</h3>
-      <div class="product-tagline">Sun. Sweat. Insects. Handled.</div>
-      <p>A dual-action outdoor formula combining broad-spectrum sun protection with insect repellent. Built for long days outside, helping you stay protected and focused wherever the journey takes you.</p>
-      <a href="#" class="product-link">SHOP →</a>
+  <div class="section-inner">
+
+    <div class="products-badger-accent">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <ellipse cx="50" cy="50" rx="23" ry="18" fill="currentColor"/>
+        <ellipse cx="150" cy="50" rx="23" ry="18" fill="currentColor"/>
+        <ellipse cx="100" cy="118" rx="74" ry="70" fill="currentColor"/>
+      </svg>
     </div>
 
-    <div class="product-card">
-      <div class="product-number">04</div>
-      <h3>RELAX BALM</h3>
-      <div class="product-tagline">You've had a Tuff day.</div>
-      <p>A deep warming balm designed for the moments when the work is done. Bringing comforting heat to tired muscles and hardworking bodies, it helps you slow down, loosen up, and enjoy a well-earned pause before tomorrow starts all over again.</p>
-      <a href="#" class="product-link">SHOP →</a>
+    <div class="section-label">BUILT FOR LONG DAYS</div>
+    <div class="section-heading">
+      <h2>OUR <span class="red-accent">GEAR</span></h2>
+      <p class="section-description">Six essentials. Six reasons to keep moving. Field-tested. Proven. Built by people who understand what your body needs when you're in the work.</p>
     </div>
 
-    <div class="product-card">
-      <div class="product-number">05</div>
-      <h3>LIP BALM</h3>
-      <div class="product-tagline">Kiss yourself goodnight.</div>
-      <p>Built for sun, wind, cold mornings, long drives, and everything in between. Tuffen Lip Balm keeps lips protected, hydrated, and ready for the next adventure. A small reminder to look after yourself while you're busy looking after everything else.</p>
-      <a href="#" class="product-link">SHOP →</a>
-    </div>
+    <div class="products-grid">
+      <div class="product-card reveal">
+        <div class="product-number">01</div>
+        <h3>HEAT CREAM</h3>
+        <div class="product-tagline">Built in the burn.</div>
+        <p>A naturally activated warming cream designed for use before and during activity. Supports muscle preparation, circulation, and movement by bringing heat to the areas that need it most. Ideal for training, competition, and long days in motion.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
 
-    <div class="product-card">
-      <div class="product-number">06</div>
-      <h3>NANO8 PROTEIN BLEND</h3>
-      <div class="product-tagline">Built for the work behind the results.</div>
-      <p>A high-efficiency protein blend formulated to support muscle recovery, repair, and daily performance. Developed with optimised protein delivery in mind, helping active bodies recover and rebuild after every session.</p>
-      <a href="#" class="product-link">SHOP →</a>
+      <div class="product-card reveal">
+        <div class="product-number">02</div>
+        <h3>ANTI-CHAFE CREAM</h3>
+        <div class="product-tagline">Eliminate + Control.</div>
+        <p>A friction defence formula with colloidal silver that creates a smooth, durable barrier in high-contact areas. Designed to support skin comfort during training, endurance events, travel, and everyday movement.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-number">03</div>
+        <h3>DUAL DEFENCE SPF</h3>
+        <div class="product-tagline">Sun. Sweat. Insects. Handled.</div>
+        <p>A dual-action outdoor formula combining broad-spectrum sun protection with insect repellent. Built for long days outside, helping you stay protected and focused wherever the journey takes you.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-number">04</div>
+        <h3>RELAX BALM</h3>
+        <div class="product-tagline">You've had a Tuff day.</div>
+        <p>A deep warming balm designed for the moments when the work is done. Bringing comforting heat to tired muscles and hardworking bodies, it helps you slow down, loosen up, and enjoy a well-earned pause before tomorrow starts all over again.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-number">05</div>
+        <h3>LIP BALM</h3>
+        <div class="product-tagline">Kiss yourself goodnight.</div>
+        <p>Built for sun, wind, cold mornings, long drives, and everything in between. Tuffen Lip Balm keeps lips protected, hydrated, and ready for the next adventure. A small reminder to look after yourself while you're busy looking after everything else.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
+
+      <div class="product-card reveal">
+        <div class="product-number">06</div>
+        <h3>NANO8 PROTEIN BLEND</h3>
+        <div class="product-tagline">Built for the work behind the results.</div>
+        <p>A high-efficiency protein blend formulated to support muscle recovery, repair, and daily performance. Developed with optimised protein delivery in mind, helping active bodies recover and rebuild after every session.</p>
+        <a href="#" class="product-link">SHOP →</a>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Values Section -->
-<section class="values">
-  <div class="values-badger-left">
-    <img src="images/badger-head.png" alt="Tuffen Badger Watermark">
-  </div>
-  
-  <div class="values-content">
-    <div class="values-intro">Built on endurance. Not talent. Not luck. Not shortcuts. Tuffen exists because active bodies need practical products. Products that work. Products that last. Products that help you go again tomorrow.
+<!-- About -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+
+      <div class="about-left">
+        <div class="section-label">SINCE DAY ONE</div>
+        <h2>WHO <span class="red-accent">WE</span><br>ARE</h2>
+        <div class="divider"></div>
+        <p>Tuffen was built by people who move. Athletes. Workers. Adventurers. People who understand that your body is your equipment — and equipment needs to be looked after.</p>
+        <p>We started because the products we needed didn't exist. So we made them. Practical. Powerful. Proven. No fluff. No nonsense. Just endurance support that works when it counts.</p>
+        <p>Everything in our range is field-tested by people in the work. Not a lab. Not a focus group. Real conditions. Real movement. Real results.</p>
+      </div>
+
+      <div class="about-right reveal">
+        <div class="about-stat">
+          <div class="about-stat-number">100%</div>
+          <div class="about-stat-label">Field Tested</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-number">6</div>
+          <div class="about-stat-label">Products Built to Last</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-number">1</div>
+          <div class="about-stat-label">Goal — Keep You Moving</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-number">0</div>
+          <div class="about-stat-label">Shortcuts. Zero.</div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="values">
+  <div class="section-inner">
+
+    <div class="values-badger-bg">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+        <ellipse cx="50" cy="50" rx="23" ry="18" fill="#1a1a1a"/>
+        <ellipse cx="150" cy="50" rx="23" ry="18" fill="#1a1a1a"/>
+        <ellipse cx="100" cy="118" rx="74" ry="70" fill="#1a1a1a"/>
+        <ellipse cx="73" cy="96" rx="17" ry="42" fill="#f5f1e8" transform="rotate(6 73 96)"/>
+        <ellipse cx="127" cy="96" rx="17" ry="42" fill="#f5f1e8" transform="rotate(-6 127 96)"/>
+        <ellipse cx="100" cy="100" rx="19" ry="44" fill="#1a1a1a"/>
+      </svg>
+    </div>
+
+    <div class="values-intro">Built on endurance. Not talent. Not luck. Not shortcuts. Tuffen exists because active bodies need practical products. Products that work. Products that last. Products that help you go again tomorrow.</div>
 
     <h2 class="values-heading">THE <span class="red-accent">TUFFEN</span> WAY</h2>
     <div class="divider"></div>
-    
+
     <div class="values-grid">
-      <div class="value-item">
+      <div class="value-item reveal">
         <h4>PREPARATION</h4>
         <p>Research. Development. Refinement. Every product tested in the field by people who move. Built to work when it matters.</p>
       </div>
-      
-      <div class="value-item">
+      <div class="value-item reveal">
         <h4>PROTECTION</h4>
         <p>Your body. Your comfort. Your capability. Products that shield you for long days. Products that don't let friction, heat, or conditions stop you.</p>
       </div>
-      
-      <div class="value-item">
+      <div class="value-item reveal">
         <h4>PERFORMANCE</h4>
         <p>Not shortcuts. Not luck. Endurance. Products that help you stay comfortable and capable. Products that keep you in the work.</p>
       </div>
-      
-      <div class="value-item">
+      <div class="value-item reveal">
         <h4>RECOVERY</h4>
         <p>Go again tomorrow. Rest earned. Tomorrow earned. Products designed for the pause. For the recovery. For the reset before you do it all again.</p>
       </div>
     </div>
+
+  </div>
+</section>
+
+<!-- Email Signup -->
+<section class="signup" id="signup">
+  <div class="signup-inner">
+    <div class="section-label">STAY IN THE LOOP</div>
+    <h2>JOIN THE<br><span class="red-accent">MOVEMENT</span></h2>
+    <p>New releases. Training tips. Real stories.<br>Straight to your inbox.</p>
+    <form class="signup-form" id="signup-form">
+      <input type="email" id="signup-email" placeholder="Your email address" required autocomplete="email">
+      <button type="submit">SIGN UP</button>
+    </form>
+    <div class="signup-note">No spam. Just endurance.</div>
   </div>
 </section>
 
 <!-- Footer -->
 <footer class="footer">
-  <div class="footer-section">
-    <div class="footer-tagline">TUFFEN</div>
-    <div class="footer-text">Nature-driven endurance support for people who move. Built in. Built on. Built to last.</div>
-  </div>
-  
-  <div class="footer-section">
-    <div class="footer-tagline">SHOP</div>
-    <div class="footer-nav">
-      <a href="#shop">ALL PRODUCTS</a>
-      <a href="#shop">HEAT CREAM</a>
-      <a href="#shop">RECOVERY BALM</a>
-      <a href="#shop">PROTECTION</a>
-    </div>
-  </div>
+  <div class="section-inner">
+    <div class="footer-main">
 
-  <div class="footer-section">
-    <div class="footer-tagline">COMPANY</div>
-    <div class="footer-nav">
-      <a href="#about">ABOUT US</a>
-      <a href="#journal">JOURNAL</a>
-      <a href="#support">SUPPORT</a>
-      <a href="#contact">CONTACT</a>
-    </div>
-  </div>
+      <div>
+        <div class="footer-tagline">TUFFEN</div>
+        <div class="footer-text">Nature-driven endurance support for people who move. Built in. Built on. Built to last.</div>
+      </div>
 
-  <div class="footer-section">
-    <div class="footer-tagline">SIGN UP</div>
-    <div class="footer-text">New releases. Training tips. Real stories. Straight to your inbox. No spam. Just endurance.</div>
+      <div>
+        <div class="footer-tagline">SHOP</div>
+        <div class="footer-nav">
+          <a href="#shop">ALL PRODUCTS</a>
+          <a href="#shop">HEAT CREAM</a>
+          <a href="#shop">ANTI-CHAFE</a>
+          <a href="#shop">DUAL DEFENCE SPF</a>
+          <a href="#shop">RELAX BALM</a>
+          <a href="#shop">NANO8 PROTEIN</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-tagline">COMPANY</div>
+        <div class="footer-nav">
+          <a href="#about">ABOUT US</a>
+          <a href="#journal">JOURNAL</a>
+          <a href="#signup">NEWSLETTER</a>
+          <a href="#support">SUPPORT</a>
+          <a href="#contact">CONTACT</a>
+        </div>
+      </div>
+
+      <div>
+        <div class="footer-tagline">GET UPDATES</div>
+        <div class="footer-text">New releases. Training tips. Real stories. Straight to your inbox. No spam. Just endurance.</div>
+        <a href="#signup" class="footer-signup-link">SIGN UP →</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">© 2025 Tuffen. All rights reserved.</div>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
   </div>
 </footer>
+
+<script>
+// Sticky header on scroll
+const header = document.getElementById('main-header');
+window.addEventListener('scroll', () => {
+  header.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// Mobile nav toggle
+const menuToggle = document.getElementById('menu-toggle');
+const mainNav = document.getElementById('main-nav');
+
+menuToggle.addEventListener('click', () => {
+  const open = menuToggle.classList.toggle('open');
+  mainNav.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+mainNav.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuToggle.classList.remove('open');
+    mainNav.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
+// Scroll-reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// Email signup
+document.getElementById('signup-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button');
+  const input = document.getElementById('signup-email');
+  btn.textContent = 'DONE ✓';
+  btn.style.cssText = 'background:#1a1a1a;border-color:#1a1a1a;color:#c41e1a;';
+  input.value = '';
+  input.placeholder = "You're in.";
+  setTimeout(() => {
+    btn.textContent = 'SIGN UP';
+    btn.style.cssText = '';
+    input.placeholder = 'Your email address';
+  }, 4000);
+});
+</script>
 
 </body>
 </html>
